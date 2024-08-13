@@ -71,7 +71,7 @@ def accecpt_connections():
 def start_turtle():
     while True:
         cmd = input('turtle> ')
-        if =='list':
+        if cmd =='list':
             list_connections()
         elif 'select' in cmd:
             conn = get_target(cmd)
