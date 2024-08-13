@@ -65,7 +65,22 @@ def accecpt_connections():
             all_addresses.append(address)
             print("\nConnection has been established " + address[0])
         except:
-            print("Error accpeting connections")
+            print("Error accepting connections")
+
+#Interactive prompt for sending commands remotely 
+def start_turtle():
+    while True:
+        cmd = input('turtle> ')
+        if =='list':
+            list_connections()
+        elif 'select' in cmd:
+            conn = get_target(cmd)
+            if conn is not None:
+                send_target_commands(conn)
+        else:
+            print("Command not recognized")
+
+
 
 #send commands
 #def send_commands(conn):
