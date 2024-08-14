@@ -1,5 +1,7 @@
 import socket 
 import sys
+import threading
+from queue import Queue
 
 NUMBER_OF_THREADS = 2
 JOB_NUMBER = [1, 2]
@@ -7,8 +9,6 @@ queue = Queue()
 
 all_connections = []
 all_addresses = []
-
-
 
 # create socket (allows two computers to conncect)
 
@@ -26,7 +26,7 @@ def socket_create():
         port = 9999
         s = socket.socket()
     except socket.error as msg:
-        print("Sockt creation error: " + str(msg))
+        print("Socket creation error: " + str(msg))
 
 #Bind socket to port and wait for onnection from client 
 def socket_bind():
@@ -36,7 +36,7 @@ def socket_bind():
         global s 
         print("Binding socket to port: " + str(port))
         s.bind((host,port))
-        #allows server to accecpt coonection (5 tries before refeusing)
+        #allows server to accept coonection (5 tries before refeusing)
         s.listen(5)
     except socket.error as msg:
         print("Socket binding error: " + str(msg) + "\n" + "Retrying")
@@ -60,7 +60,7 @@ def accecpt_connections():
     while 1:
         try:
             conn, address = s.accept()
-            conn, setblocking(1)
+            conn.setblocking(1)
             all_connections.append(conn)
             all_addresses.append(address)
             print("\nConnection has been established " + address[0])
@@ -122,6 +122,34 @@ def send_target_commands(conn):
             print("Connection was lost")
             break
             
+#Create worker threads
+def create_workers():
+    for _ in range(NUMBER_OF_THREADS):
+        t = threading.Thread(target = work)
+        #if main program dies, no subprocess continues 
+        t.daemon = True
+        t.start()
+
+#Do the next job in the que (one handles connections the other sends commands)
+def work():
+    while True:
+        x = queue.get()
+        if x == 1:
+            socket_create()
+            socket_bind()
+            accecpt_connections()
+        if x == 2:
+            start_turtle()
+        queue.task_done()
+
+#Each list item is a new Job
+def create_jobs():
+    for x in JOB_NUMBER:
+        queue.put(x)
+    queue.join()
+
+create_workers()
+create_jobs()
 
 #send commands
 #def send_commands(conn):
