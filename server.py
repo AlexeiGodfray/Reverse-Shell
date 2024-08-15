@@ -100,8 +100,8 @@ def get_target(cmd):
         target = cmd.replace('select ', '')
         target = int(target)
         conn = all_connections[target]
-        print('you are now connected to ' + str(all_addresses[target[0]]))
-        print(str(all_addresses[target[0]]) + '> ', end="")
+        print('you are now connected to ' + str(all_addresses[target]))
+        print(str(all_addresses[target]) + '> ', end="")
         return conn
     except:
         print("Not a valid slecetion")
